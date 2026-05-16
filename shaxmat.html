@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Chess PRO HD - Classic 2D Vibrant Edition</title>
+
+<style>
+*{
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body{
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+    background: radial-gradient(circle at center, #1a2634, #080d14);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* MENU OVERLAY - PREMIUM GLASSMORPHISM */
+#menu{
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    background: rgba(8, 13, 20, 0.9);
+    z-index: 50;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* BRANDING TITLE */
+.title{
+    color: #ffffff;
+    font-size: 54px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 50%, #d35400 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 25px rgba(243, 156, 18, 0.4));
+    margin-bottom: 20px;
+    animation: pulseGlow 3s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(243, 156, 18, 0.3)); }
+    50% { filter: drop-shadow(0 0 40px rgba(230, 126, 34, 0.6)); }
+}
+
+h2 {
+    font-size: 24px;
+    letter-spacing: 1px;
+    text-align: center;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #f1c40f, #e67e22);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ADVANCED BUTTONS */
+button{
+    padding: 18px 45px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: white;
+    background: linear-gradient(135deg, #d35400 0%, #c0392b 100%);
+    box-shadow: 0 0 20px rgba(211, 84, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.4);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: 0.5s;
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:hover{
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 0 35px rgba(211, 84, 0, 0.5), 0 0 15px rgba(192, 41, 43, 0.4);
+}
+
+/* SPECIAL COLOR SELECTION BUTTONS */
+#colorMenu button:first-of-type {
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    color: #0f172a;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+#colorMenu button:first-of-type:hover {
+    box-shadow: 0 0 35px rgba(255, 255, 255, 0.5);
+}
+
+#colorMenu button:last-of-type {
+    background: linear-gradient(135deg, #2c3e50 0%, #0f172a 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+#colorMenu button:last-of-type:hover {
+    box-shadow: 0 0 35px rgba(44, 62, 80, 0.8);
+}
+
+/* PREMIUM HUD */
+.hud{
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    color: #e2e8f0;
+    background: rgba(15, 20, 30, 0.75);
+    padding: 20px 30px;
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(243, 156, 18, 0.2);
+    line-height: 2;
+    font-size: 15px;
+    z-index: 20;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 10px rgba(243, 156, 18, 0.1);
+}
+
+.hud span {
+    font-weight: 900;
+    color: #f39c12;
+    text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+}
+
+/* MENU BUTTON */
+#menuBtn{
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 30;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 16px 28px;
+    font-size: 15px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #1a2634, #2c3e50);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    cursor: pointer;
+}
+
+#menuBtn:hover {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
+}
+
+/* WIN OVERLAY */
+#win{
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 13, 20, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    z-index: 60;
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(211,84,0,0.8);
+    gap: 35px;
+}
+
+/* CANVAS GLOW */
+canvas{
+    display: block;
+    margin: auto;
+    image-rendering: auto;
+    border-radius: 12px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 40px rgba(243, 156, 18, 0.1);
+}
+
+@media(max-width:768px){
+    .title{ font-size: 38px; }
+    button { font-size: 14px; padding: 14px 32px; }
+    .hud { font-size: 13px; padding: 15px 20px; bottom: 95px; left: 25px; }
+}
+</style>
+</head>
+<body>
+
+<div id="menu">
+    <div class="title">♞ CHESS PRO 2D</div>
+
+    <div id="mainMenu" style="display:flex; flex-direction:column; gap:20px; width: 280px;">
+        <button onclick="openColorMenu('pvp')">👥 1 vs 1 Mode</button>
+        <button onclick="openDifficultyMenu()">🤖 Practice vs Robot</button>
+    </div>
+
+    <div id="difficultyMenu" style="display:none; flex-direction:column; gap:20px; width: 280px;">
+        <h2 style="margin-bottom:10px;">Select AI Level</h2>
+        <button style="background: linear-gradient(135deg, #059669, #10b981);" onclick="setDifficulty('easy')">🟢 Easy Bot</button>
+        <button style="background: linear-gradient(135deg, #d97706, #f59e0b);" onclick="setDifficulty('hard')">🟠 Smart Bot</button>
+        <button style="background: linear-gradient(135deg, #dc2626, #ef4444);" onclick="setDifficulty('impossible')">🔴 Grandmaster Bot</button>
+    </div>
+
+    <div id="colorMenu" style="display:none; flex-direction:column; gap:20px; width: 280px;">
+        <h2 style="margin-bottom:10px;">Select Play Side</h2>
+        <button onclick="startGame('white')">⚪ Play as White</button>
+        <button onclick="startGame('black')">⚫ Play as Black</button>
+    </div>
+</div>
+
+<div class="hud">
+    Turn: <span id="turn">White</span><br>
+    White Captures: <span id="wscore">0</span><br>
+    Black Captures: <span id="bscore">0</span>
+</div>
+
+<button id="menuBtn" onclick="location.reload()">☰ Menu</button>
+<div id="win"></div>
+<canvas id="game"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+let size = Math.min(innerWidth, innerHeight) * 0.88;
+const TILE = size / 8;
+
+canvas.width = size * DPR;
+canvas.height = size * DPR;
+canvas.style.width = size + "px";
+canvas.style.height = size + "px";
+ctx.scale(DPR, DPR);
+
+const glyphs = {
+    white: { P: "♙", R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔" },
+    black: { P: "♟", R: "♜", N: "♞", B: "♝", Q: "♛", K: "♚" }
+};
+
+let board = [];
+let selected = null;
+let turn = "white";
+let mode = "pvp";
+let playerColor = "white";
+let aiLevel = "easy";
+let wScore = 0;
+let bScore = 0;
+let gameOver = false;
+
+// 2D Perspective handling: PvP limits board rotation so it always remains fixed.
+function getDisplayCoords(x, y) {
+    let currentView = (mode === "pvp") ? "white" : playerColor;
+    if (currentView === "black") {
+        return { x: 7 - x, y: 7 - y };
+    }
+    return { x, y };
+}
+
+function getLogicCoords(displayX, displayY) {
+    let currentView = (mode === "pvp") ? "white" : playerColor;
+    if (currentView === "black") {
+        return { x: 7 - displayX, y: 7 - displayY };
+    }
+    return { x: displayX, y: displayY };
+}
+
+function init() {
+    board = [];
+    wScore = 0;
+    bScore = 0;
+    updateScore();
+
+    const backRow = ["R", "N", "B", "Q", "K", "B", "N", "R"];
+
+    for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+            let piece = null;
+
+            if (y === 0) {
+                piece = { type: backRow[x], color: "black", id: "b" + backRow[x] + x };
+            } else if (y === 1) {
+                piece = { type: "P", color: "black", id: "bp" + x };
+            } else if (y === 6) {
+                piece = { type: "P", color: "white", id: "wp" + x };
+            } else if (y === 7) {
+                piece = { type: backRow[x], color: "white", id: "w" + backRow[x] + x };
+            }
+
+            board.push({ x, y, piece });
+        }
+    }
+}
+
+function get(x, y) {
+    return board.find(c => c.x === x && c.y === y);
+}
+
+function openColorMenu(m) {
+    mode = m;
+    document.getElementById("mainMenu").style.display = "none";
+    document.getElementById("colorMenu").style.display = "flex";
+}
+
+function openDifficultyMenu() {
+    mode = "ai";
+    document.getElementById("mainMenu").style.display = "none";
+    document.getElementById("difficultyMenu").style.display = "flex";
+}
+
+function setDifficulty(level) {
+    aiLevel = level;
+    document.getElementById("difficultyMenu").style.display = "none";
+    document.getElementById("colorMenu").style.display = "flex";
+}
+
+function startGame(color) {
+    playerColor = color;
+    document.getElementById("menu").style.display = "none";
+    init();
+    turn = "white";
+    document.getElementById("turn").innerText = "White";
+
+    if (mode === "ai" && playerColor === "black") {
+        setTimeout(aiMove, 400);
+    }
+}
+
+function updateScore() {
+    document.getElementById("wscore").innerText = wScore;
+    document.getElementById("bscore").innerText = bScore;
+}
+
+function getMoves(cell) {
+    let moves = [];
+    if (!cell.piece) return moves;
+
+    let p = cell.piece;
+    let x = cell.x;
+    let y = cell.y;
+    let enemyColor = p.color === "white" ? "black" : "white";
+
+    function slide(dirs) {
+        dirs.forEach(d => {
+            let nx = x + d[0];
+            let ny = y + d[1];
+            while (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                let target = get(nx, ny);
+                if (!target.piece) {
+                    moves.push({ type: "move", cell: target });
+                } else {
+                    if (target.piece.color === enemyColor) {
+                        moves.push({ type: "capture", cell: target, kill: target });
+                    }
+                    break;
+                }
+                nx += d[0];
+                ny += d[1];
+            }
+        });
+    }
+
+    switch (p.type) {
+        case "P":
+            let dir = p.color === "white" ? -1 : 1;
+            let startRow = p.color === "white" ? 6 : 1;
+            
+            let next1 = get(x, y + dir);
+            if (next1 && !next1.piece) {
+                moves.push({ type: "move", cell: next1 });
+                let next2 = get(x, y + dir * 2);
+                if (y === startRow && next2 && !next2.piece) {
+                    moves.push({ type: "move", cell: next2 });
+                }
+            }
+            [-1, 1].forEach(dx => {
+                let diag = get(x + dx, y + dir);
+                if (diag && diag.piece && diag.piece.color === enemyColor) {
+                    moves.push({ type: "capture", cell: diag, kill: diag });
+                }
+            });
+            break;
+
+        case "R":
+            slide([[1,0], [-1,0], [0,1], [0,-1]]);
+            break;
+
+        case "B":
+            slide([[1,1], [-1,1], [1,-1], [-1,-1]]);
+            break;
+
+        case "Q":
+            slide([[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,1], [1,-1], [-1,-1]]);
+            break;
+
+        case "N":
+            let knightDirs = [[1,2], [2,1], [-1,2], [-2,1], [1,-2], [2,-1], [-1,-2], [-2,-1]];
+            knightDirs.forEach(d => {
+                let nx = x + d[0], ny = y + d[1];
+                if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                    let target = get(nx, ny);
+                    if (!target.piece) moves.push({ type: "move", cell: target });
+                    else if (target.piece.color === enemyColor) moves.push({ type: "capture", cell: target, kill: target });
+                }
+            });
+            break;
+
+        case "K":
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                    if (dx === 0 && dy === 0) continue;
+                    let nx = x + dx, ny = y + dy;
+                    if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                        let target = get(nx, ny);
+                        if (!target.piece) moves.push({ type: "move", cell: target });
+                        else if (target.piece.color === enemyColor) moves.push({ type: "capture", cell: target, kill: target });
+                    }
+                }
+            }
+            break;
+    }
+    return moves;
+}
+
+function evaluateMove(p, m) {
+    let score = 0;
+    const pieceValues = { P: 10, N: 30, B: 30, R: 50, Q: 90, K: 900 };
+    if (m.type === "capture" && m.kill.piece) {
+        score += pieceValues[m.kill.piece.type] * 10;
+    }
+    if (m.cell.x >= 3 && m.cell.x <= 4 && m.cell.y >= 3 && m.cell.y <= 4) {
+        score += 8;
+    }
+    score += Math.random() * 5;
+    return score;
+}
+
+function animate(fromCell, toCell, move, callback) {
+    let piece = fromCell.piece;
+    let startX = fromCell.x, startY = fromCell.y;
+    let endX = toCell.x, endY = toCell.y;
+    let t = 0;
+
+    piece.animX = startX;
+    piece.animY = startY;
+
+    function step() {
+        t += 0.12; // Yurish tezligi oshirildi (0.06 dan 0.12 ga)
+        if (t >= 1) {
+            piece.animX = null;
+            piece.animY = null;
+            movePiece(fromCell, toCell, move);
+            callback();
+            return;
+        }
+        piece.animX = startX + (endX - startX) * t;
+        piece.animY = startY + (endY - startY) * t;
+        requestAnimationFrame(step);
+    }
+    step();
+}
+
+function movePiece(from, to, move) {
+    if (move.type === "capture") {
+        if (from.piece.color === "white") wScore++;
+        else bScore++;
+        updateScore();
+    }
+    to.piece = from.piece;
+    from.piece = null;
+
+    if (to.piece.type === "P" && (to.y === 0 || to.y === 7)) {
+        to.piece.type = "Q"; 
+    }
+}
+
+// CheckWin function fixed to properly announce game outcomes in English
+function checkWin() {
+    let whiteKing = board.find(c => c.piece && c.piece.type === "K" && c.piece.color === "white");
+    let blackKing = board.find(c => c.piece && c.piece.type === "K" && c.piece.color === "black");
+
+    if (!whiteKing) showWin("⚫ BLACK WINS! (Checkmate)");
+    if (!blackKing) showWin("⚪ WHITE WINS! (Checkmate)");
+}
+
+function showWin(text) {
+    gameOver = true;
+    let win = document.getElementById("win");
+    win.style.display = "flex";
+    win.innerHTML = `<div>${text}</div><button onclick="location.reload()">🔄 Restart Game</button>`;
+}
+
+function draw() {
+    for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+            let display = getDisplayCoords(x, y);
+            let dark = (x + y) % 2;
+            
+            ctx.fillStyle = dark ? "#4a3319" : "#f9f1d6";
+            ctx.fillRect(display.x * TILE, display.y * TILE, TILE, TILE);
+            
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(display.x * TILE, display.y * TILE, TILE, TILE);
+        }
+    }
+
+    if (selected) {
+        let displaySel = getDisplayCoords(selected.x, selected.y);
+        ctx.fillStyle = "rgba(230, 126, 34, 0.4)"; 
+        ctx.fillRect(displaySel.x * TILE, displaySel.y * TILE, TILE, TILE);
+
+        getMoves(selected).forEach(m => {
+            let displayMove = getDisplayCoords(m.cell.x, m.cell.y);
+            ctx.fillStyle = m.type === "capture" ? "rgba(231, 76, 60, 0.4)" : "rgba(46, 204, 113, 0.4)";
+            ctx.fillRect(displayMove.x * TILE, displayMove.y * TILE, TILE, TILE);
+        });
+    }
+
+    board.forEach(c => {
+        if (!c.piece) return;
+
+        let curX = c.piece.animX ?? c.x;
+        let curY = c.piece.animY ?? c.y;
+        let display = getDisplayCoords(curX, curY);
+
+        ctx.save();
+        ctx.font = `bold ${TILE * 0.75}px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowOffsetY = 2;
+
+        let isWhite = c.piece.color === "white";
+        ctx.fillStyle = isWhite ? "#ffffff" : "#151c24";
+        ctx.strokeStyle = isWhite ? "#2c3e50" : "rgba(255,255,255,0.2)";
+        ctx.lineWidth = 1.5;
+
+        let drawX = display.x * TILE + TILE / 2;
+        let drawY = display.y * TILE + TILE / 2;
+
+        ctx.strokeText(glyphs[c.piece.color][c.piece.type], drawX, drawY);
+        ctx.fillText(glyphs[c.piece.color][c.piece.type], drawX, drawY);
+        ctx.restore();
+    });
+}
+
+canvas.addEventListener("click", (e) => {
+    if (gameOver) return;
+    if (mode === "ai" && turn !== playerColor) return;
+
+    let rect = canvas.getBoundingClientRect();
+    let mouseX = e.clientX - rect.left;
+    let mouseY = e.clientY - rect.top;
+
+    let displayX = Math.floor(mouseX / (rect.width / 8));
+    let displayY = Math.floor(mouseY / (rect.height / 8));
+
+    if (displayX < 0 || displayX > 7 || displayY < 0 || displayY > 7) return;
+
+    let logicCoords = getLogicCoords(displayX, displayY);
+    let cell = get(logicCoords.x, logicCoords.y);
+
+    if (selected) {
+        let moves = getMoves(selected);
+        let move = moves.find(m => m.cell === cell);
+
+        if (move) {
+            animate(selected, cell, move, () => {
+                selected = null;
+                turn = turn === "white" ? "black" : "white";
+                document.getElementById("turn").innerText = turn.charAt(0).toUpperCase() + turn.slice(1);
+
+                checkWin();
+
+                if (mode === "ai" && turn !== playerColor) {
+                    setTimeout(aiMove, 400);
+                }
+            });
+        } else {
+            selected = null;
+        }
+    } else if (cell && cell.piece && cell.piece.color === turn) {
+        selected = cell;
+    }
+});
+
+function aiMove() {
+    if (gameOver) return;
+
+    let aiColor = playerColor === "white" ? "black" : "white";
+    let pieces = board.filter(c => c.piece && c.piece.color === aiColor);
+    let all = [];
+
+    pieces.forEach(p => {
+        getMoves(p).forEach(m => {
+            all.push({ p, m, score: evaluateMove(p, m) });
+        });
+    });
+
+    if (all.length === 0) {
+        showWin(playerColor === "white" ? "⚪ WHITE WINS!" : "⚫ BLACK WINS!");
+        return;
+    }
+
+    let chosen;
+    if (aiLevel === "easy") {
+        chosen = all[Math.floor(Math.random() * all.length)];
+    } else {
+        all.sort((a, b) => b.score - a.score);
+        chosen = all[0];
+    }
+
+    animate(chosen.p, chosen.m.cell, chosen.m, () => {
+        turn = playerColor;
+        document.getElementById("turn").innerText = turn.charAt(0).toUpperCase() + turn.slice(1);
+        checkWin();
+    });
+}
+
+function loop() {
+    ctx.clearRect(0, 0, size, size);
+    draw();
+    requestAnimationFrame(loop);
+}
+
+init();
+loop();
+</script>
+</body>
+</html>
